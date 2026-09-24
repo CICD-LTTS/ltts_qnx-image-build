@@ -1,0 +1,46 @@
+# post_start.~30.sensor_framework
+# Start sensor framework
+
+echo '---> Starting camera support...'
+# Set GPIO  for CSI2 cameras
+gpio-bcm2711 set 44 a1 # Set pin 44 to SDA0
+gpio-bcm2711 set 45 a1 # Set pin 45 to SCL0
+
+gpio-bcm2711 set 0 ip pd # Pull down pin 0
+gpio-bcm2711 set 1 ip pd # Pull down pin 1
+
+# Start VCHIQ and VCSM modules for ISP debayering
+bcm-rpi4-vchiq &
+waitfor /dev/vchiq
+if [ $? -ne 0 ]; then
+    echo '---> waitfor /dev/vchiq failed.'
+fi
+bcm-rpi4-vcsm &
+waitfor /dev/vcsm
+if [ $? -ne 0 ]; then
+    echo '---> waitfor /dev/vcsm failed.'
+fi
+
+if [ -d /dev/screen ]; then
+    echo '---> Starting sensor framework...'
+
+    # There can only be 1 instance of sensor simultaneously.
+    # Starting the service with a default configuration for the target device.
+    sensor -U 521:521 -b external -r /data/share/sensor -c /etc/config/sensor/sensor_rpi4.conf
+
+    waitfor /dev/sensor/camera1
+    if [ $? -ne 0 ]; then
+        echo '---> waitfor /dev/sensor/camera1 failed.'
+    fi
+    waitfor /dev/sensor/camera2
+    if [ $? -ne 0 ]; then
+        echo '---> waitfor /dev/sensor/camera2 failed.'
+    fi
+    waitfor /dev/sensor/camera3
+    if [ $? -ne 0 ]; then
+        echo '---> waitfor /dev/sensor/camera3 failed.'
+    fi
+else 
+    echo '---> Error Screen not available.  Sensor framework will not be started.'
+fi
+

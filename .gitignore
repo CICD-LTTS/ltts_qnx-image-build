@@ -1,0 +1,8 @@
+*.swp
+/qnx800/
+/build/
+/install/
+/system/desktop.config/weston.ini
+/system/etc/ssl/certs
+/options_file
+*/stage

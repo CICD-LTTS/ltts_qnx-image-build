@@ -1,0 +1,2 @@
+# integrate configuration files for sudo
+etc/sudoers.d=etc/sudoers.d

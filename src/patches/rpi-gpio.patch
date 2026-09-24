@@ -1,0 +1,74 @@
+From 8cfcfa3ec8362e3fde542f285da3e67a258c379a Mon Sep 17 00:00:00 2001
+From: Darcy Phipps <dphipps@qnx.com>
+Date: Mon, 1 Dec 2025 14:12:19 -0500
+Subject: [PATCH] Fix broken mainline build
+
+Looks like mainline has advanced to python3.13. Need to account for that
+while still supporting building against python3.11. The latter is what
+the current public SDP is using.
+
+Discover what version of python is in the SDP and use that information
+when constructing filepaths.
+
+To get the shiplist to work required a bit more effort. Generate a
+shiplist.vars file when being run as Jenkins that gives the python
+version.
+---
+ python/rpi_gpio/common.mk |  9 ++++++---
+ python/smbus/common.mk    |  9 ++++++---
+ qnx/build/Makefile        | 12 ++++++++++++
+ qnx/shiplist/rpi_gpio.xml |  7 ++++---
+ 4 files changed, 28 insertions(+), 9 deletions(-)
+ create mode 100644 qnx/build/Makefile
+
+diff --git a/python/rpi_gpio/common.mk b/python/rpi_gpio/common.mk
+index 7811984..31ed9f5 100644
+--- a/python/rpi_gpio/common.mk
++++ b/python/rpi_gpio/common.mk
+@@ -3,14 +3,17 @@ QCONFIG=qconfig.mk
+ endif
+ include $(QCONFIG)
+ 
++# Discover what version of python I'm being compiled against.
++PYVER=$(notdir $(firstword $(shell find $(QNX_TARGET)/usr/include -type d -name python*)))
++
+ define PINFO
+ PINFO DESCRIPTION = Python module implementing a client for the GPIO resource manager
+ endef
+-INSTALLDIR=/usr/lib/python3.11
++INSTALLDIR=/usr/lib/$(PYVER)
+ NAME=rpi_gpio
+ SONAME=rpi_gpio.so
+ 
+-EXTRA_INCVPATH=$(QNX_TARGET)/usr/include/python3.11 $(QNX_TARGET)/usr/include/$(CPUVARDIR)/python3.11
+-LIBS=python3.11
++EXTRA_INCVPATH=$(QNX_TARGET)/usr/include/$(PYVER) $(QNX_TARGET)/usr/include/$(CPUVARDIR)/$(PYVER)
++LIBS=$(PYVER)
+ 
+ include $(MKFILES_ROOT)/qtargets.mk
+diff --git a/python/smbus/common.mk b/python/smbus/common.mk
+index 55199dd..4a71fe6 100644
+--- a/python/smbus/common.mk
++++ b/python/smbus/common.mk
+@@ -3,14 +3,17 @@ QCONFIG=qconfig.mk
+ endif
+ include $(QCONFIG)
+ 
++# Discover what version of python I'm being compiled against.
++PYVER=$(notdir $(firstword $(shell find $(QNX_TARGET)/usr/include -type d -name python*)))
++
+ define PINFO
+ PINFO DESCRIPTION = Python module implementing the SMBus interface
+ endef
+-INSTALLDIR=/usr/lib/python3.11
++INSTALLDIR=/usr/lib/$(PYVER)
+ NAME=smbus
+ SONAME=smbus.so
+ 
+-EXTRA_INCVPATH=$(QNX_TARGET)/usr/include/python3.11 $(QNX_TARGET)/usr/include/$(CPUVARDIR)/python3.11
+-LIBS=python3.11
++EXTRA_INCVPATH=$(QNX_TARGET)/usr/include/$(PYVER) $(QNX_TARGET)/usr/include/$(CPUVARDIR)/$(PYVER)
++LIBS=$(PYVER)
+ 
+ include $(MKFILES_ROOT)/qtargets.mk
+

@@ -1,0 +1,8 @@
+## Use a hard-coded PATH instead of the user's to find commands.
+## This also helps prevent poorly written scripts from running
+## arbitrary commands under sudo.
+Defaults secure_path="/usr/bin:/proc/boot:/proc/boot/bin:/proc/boot/sbin:/ifs:/ifs/bin:/ifs/usr/bin:/ifs/sbin"
+
+## allow members of group sudo to execute any command
+%sudo ALL=(ALL:ALL) ALL
+

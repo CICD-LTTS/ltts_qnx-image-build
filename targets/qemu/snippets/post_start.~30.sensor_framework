@@ -1,0 +1,23 @@
+# post_start.~30.sensor_framework
+# Start sensor framework
+
+if [ -d /dev/screen ]; then
+    echo '---> Starting sensor framework...'
+
+    # There can only be 1 instance of sensor simultaneously.
+    # Starting the service with a default configuration for the target device.
+    sensor -U 521:521 -r /data/share/sensor -c /etc/config/sensor/sensor_qemu.conf
+
+    waitfor /dev/sensor/camera1
+    if [ $? -ne 0 ]; then
+        echo '---> waitfor /dev/sensor/camera1 failed.'
+    fi
+
+    waitfor /dev/sensor/camera2
+    if [ $? -ne 0 ]; then
+        echo '---> waitfor /dev/sensor/camera2 failed.'
+    fi
+else 
+    echo '---> Error Screen not available.  Sensor framework will not be started.'
+fi
+

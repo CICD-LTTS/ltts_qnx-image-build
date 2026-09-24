@@ -1,0 +1,155 @@
+--- ../../build/qemu/output/build/system.build.orig	2026-08-16 19:38:52.842180650 -0400
++++ ../../build/qemu/output/build/system.build	2026-08-16 20:10:49.033103340 -0400
+@@ -166,14 +166,12 @@
+ [type=hlink] bin/chgrp=toybox
+ [type=hlink] bin/chown=toybox
+ [type=hlink] bin/cksum=toybox
+-[type=hlink] bin/clear=toybox
+ [type=hlink] bin/cmp=toybox
+ [type=hlink] bin/comm=toybox
+ [type=hlink] bin/cp=toybox
+ [type=hlink] bin/cpio=toybox
+ [type=hlink] bin/crc32=toybox
+ [type=hlink] bin/cut=toybox
+-[type=hlink] bin/date=toybox
+ [type=hlink] bin/diff=toybox
+ [type=hlink] bin/dirname=toybox
+ [type=hlink] bin/dos2unix=toybox
+@@ -223,7 +221,6 @@
+ [type=hlink] bin/stat=toybox
+ [type=hlink] bin/strings=toybox
+ [type=hlink] bin/tail=toybox
+-[type=hlink] bin/tar=toybox
+ [type=hlink] bin/tee=toybox
+ [type=hlink] bin/test=toybox
+ [type=hlink] bin/time=toybox
+@@ -244,7 +241,6 @@
+ [type=hlink] bin/which=toybox
+ [type=hlink] bin/whoami=toybox
+ [type=hlink] bin/xargs=toybox
+-[type=hlink] bin/xxd=toybox
+ [type=hlink] bin/yes=toybox
+ [type=hlink] bin/zcat=toybox
+ 
+@@ -283,6 +279,7 @@
+ lib/libusbdci.so.2=lib/libusbdci.so.2
+ 
+ bin/dhcpcd=sbin/dhcpcd
++[type=link] etc/resolv.conf=/data/var/dhcpcd/resolv.conf
+ [type=dir dperms=555] etc/dhcpcd
+ [perms=444] etc/dhcpcd/dhcpcd.conf=etc/dhcpcd.conf
+ [perms=555] etc/dhcpcd/dhcpcd-run-hooks=output/build/dhcpcd-run-hooks
+@@ -305,32 +302,24 @@
+ 
+ 
+ #############################################
+-### ssh
++### Users
+ #############################################
+-bin/sshd=usr/sbin/sshd
+-bin/ssh-keygen=usr/bin/ssh-keygen
+-bin/sshd-session=usr/libexec/sshd-session
+-[dperms=555 type=dir] etc/ssh
+-[perms=444] etc/ssh/sshd_config={
+-Protocol 2
+-HostKey /data/var/ssh/ssh_host_rsa_key
+-HostKey /data/var/ssh/ssh_host_ed25519_key
+-Ciphers aes128-ctr,aes192-ctr,aes256-ctr
+-MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com
+-KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256
+-AuthorizedKeysFile	.ssh/authorized_keys
+-UsePAM yes
+-# Disallow sshd's password checking though passwords might still be allowed
+-# via pam.
+-PasswordAuthentication no
+-PermitUserEnvironment yes
+-PidFile none
+-Subsystem sftp /system/bin/sftp-server
+-SshdSessionPath /system/bin/sshd-session
+-}
+-bin/scp=usr/bin/scp
+-bin/sftp-server=usr/libexec/sftp-server
+-bin/ssh=usr/bin/ssh
++
++[uid=0 gid=0 dperms=755 type=dir] home
++
++[gid=0 uid=0 perms=644] etc/passwd = output/build/passwd
++[gid=0 uid=0 perms=600 acl=u:0:r] etc/shadow = output/build/shadow
++
++[gid=0 uid=0 perms=644] etc/group = output/build/group
++
++[type=dir gid=0 uid=0 perms=755] etc/default
++
++[gid=0 uid=0 perms=644] etc/default/passwd = {
++BASEDIR=/data/home
++UIDRANGE=1000
++GIDRANGE=1000
++}
++
+ 
+ #############################################
+ ## PAM
+@@ -338,38 +327,29 @@
+ [uid=0 gid=0 dperms=755 type=dir] /lib/dll/pam
+ [uid=0 gid=0 dperms=755 type=dir] /etc/pam
+ 
+-lib/libpam.so.2=usr/lib/libpam.so.2
++[uid=0 gid=0 dperms=755 type=dir] etc/pam.d
+ 
+-lib/dll/pam/pam_deny.so=usr/lib/pam_deny.so
+-lib/dll/pam/pam_echo.so=usr/lib/pam_echo.so
+-lib/dll/pam/pam_exec.so=usr/lib/pam_exec.so
+-lib/dll/pam/pam_group.so=usr/lib/pam_group.so
+-lib/dll/pam/pam_permit.so=usr/lib/pam_permit.so
+-lib/dll/pam/pam_qnx.so=usr/lib/pam_qnx.so
+-lib/dll/pam/pam_rootok.so=usr/lib/pam_rootok.so
+-lib/dll/pam/pam_self.so=usr/lib/pam_self.so
+-
+-[perms=444] etc/pam/login = {
++[perms=444] etc/pam.d/login = {
+ auth requisite pam_qnx.so
+ account requisite pam_qnx.so
+ session requisite pam_qnx.so
+ 
+ password requisite pam_qnx.so
+ }
+-[perms=444] etc/pam/sshd = {
++[perms=444] etc/pam.d/sshd = {
+ auth requisite pam_qnx.so
+ account requisite pam_qnx.so
+ session requisite pam_qnx.so
+ 
+ password requisite pam_qnx.so
+ }
+-[perms=444] etc/pam/passwd = {
++[perms=444] etc/pam.d/passwd = {
+ auth requisite pam_qnx.so
+ account requisite pam_qnx.so
+ session requisite pam_qnx.so
+ password requisite pam_qnx.so
+ }
+-[perms=444] etc/pam/su = {
++[perms=444] etc/pam.d/su = {
+ auth sufficient pam_rootok.so no_warn
+ auth requisite pam_qnx.so
+ account requisite pam_qnx.so
+@@ -378,6 +358,19 @@
+ password requisite pam_qnx.so
+ }
+ 
++# TODO: add what is missing from apk package until it is fixed
++#
++[type=link] lib/libpam.so=libpam.so.2
++[type=link] lib/pam_deny.so=pam_deny.so.2
++[type=link] lib/pam_echo.so=pam_echo.so.2
++[type=link] lib/pam_exec.so=pam_exec.so.2
++[type=link] lib/pam_group.so=pam_group.so.2
++[type=link] lib/pam_permit.so=pam_permit.so.2
++[type=link] lib/pam_qnx.so=pam_qnx.so.2
++[type=link] lib/pam_rootok.so=pam_rootok.so.2
++[type=link] lib/pam_secpol.so=pam_secpol.so.2
++[type=link] lib/pam_self.so=pam_self.so.2
++
+ #############################################
+ ### Customization
+ #############################################

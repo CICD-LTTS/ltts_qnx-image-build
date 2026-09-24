@@ -1,0 +1,3 @@
+## allow group abuild to execute any command
+%abuild ALL=(ALL:ALL) NOPASSWD: ALL
+
