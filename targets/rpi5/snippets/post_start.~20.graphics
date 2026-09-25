@@ -1,0 +1,27 @@
+# post_start.~20.graphics
+# Start screen and the graphics stack
+
+chown __SCREEN_ID__ /dev/io-hid/io-hid
+
+echo '---> Starting DRM...'
+drm-rpi5 -u __SCREEN_ID__:__SCREEN_ID__
+waitfor /dev/dri/card0 15
+if [ $? -ne 0 ]; then
+    echo '---> waitfor /dev/dri/card0 failed.'
+fi
+waitfor /dev/dri/card1 15
+if [ $? -ne 0 ]; then
+    echo '---> waitfor /dev/dri/card1 failed.'
+fi
+
+echo '---> Starting Screen...'
+time screen -u __SCREEN_ID__:__SCREEN_ID__ -c /usr/share/screen/graphics-rpi5-2xhdmi.conf >/dev/null 2>&1
+time waitfor /dev/screen/ 15
+if [ $? -ne 0 ]; then
+    echo '---> waitfor /dev/screen/ failed.'
+fi
+
+echo '---> Dropping drm privileges'
+echo drop_privileges > /dev/dri/qnxcommand
+echo '---> Dropping screen privileges'
+echo drop_privileges > /dev/screen/command

@@ -1,0 +1,76 @@
+# RPi GPU
+
+######################################################
+### Common Graphics Files
+######################################################
+etc/system/config/img.conf=etc/system/config/img.conf
+
+######################################################
+### Graphics - Screen
+######################################################
+bin/screencmd=bin/screencmd
+bin/screeninfo=bin/screeninfo
+
+# Config
+lib/graphics/vulkan/VkLayer_khronos_validation.json=usr/lib/graphics/vulkan/VkLayer_khronos_validation.json
+
+[type=link] lib/libscreen.so=libscreen.so.1
+[type=link] lib/libscrmem.so=libscrmem.so.1
+[type=link] lib/libmemobj.so=libmemobj.so.1
+[type=link] lib/libdrm.so=libdrm.so.2
+[type=link] lib/libWFD.so=libWFD.so.1
+[type=link] lib/libgbm.so=libgbm.so.1
+
+########################################
+## SDL (image only)
+########################################
+lib/__LIBPNG16__=usr/lib/__LIBPNG16__
+lib/libjpeg.so.9=lib/libjpeg.so.9
+lib/libtiff.so.5=usr/lib/libtiff.so.5
+[type=link] lib/libpng16.so=__LIBPNG16__
+
+### EGL & Vulkan
+# needed for GTK+ OpenGL support
+[type=link] lib/libGLESv2.so.2=libGLESv2.so.1
+[type=file uid=0 gid=0 perms=0555] bin/vkcubepp=usr/bin/vkcubepp
+
+########################################
+## libraries
+########################################
+lib/libgestures.so.1=lib/libgestures.so.1
+lib/libinputevents.so.1=lib/libinputevents.so.1
+lib/libkalman.so.1=lib/libkalman.so.1
+lib/libimg.so.1=lib/libimg.so.1
+
+[type=link] lib/libgestures.so=libgestures.so.1
+[type=link] lib/libinputevents.so=libinputevents.so.1
+[type=link] lib/libkalman.so=libkalman.so.1
+[type=link] lib/libimg.so=libimg.so.1
+
+########################################
+## DLLs
+########################################
+
+#########################################
+## more libraries
+#########################################
+[type=link] lib/libswblit.so=libswblit.so.1
+
+#############################################
+### Image Loading
+#############################################
+lib/dll/img_codec_bmp.so=lib/dll/img_codec_bmp.so
+lib/dll/img_codec_gif.so=lib/dll/img_codec_gif.so
+lib/dll/img_codec_jpg.so=lib/dll/img_codec_jpg.so
+lib/dll/img_codec_png.so=lib/dll/img_codec_png.so
+lib/dll/img_codec_sgi.so=lib/dll/img_codec_sgi.so
+lib/dll/img_codec_tga.so=lib/dll/img_codec_tga.so
+lib/dll/img_codec_tif.so=lib/dll/img_codec_tif.so
+
+
+#############################################
+### Input
+#############################################
+lib/dll/devh-usb.so=lib/dll/devh-usb.so
+[type=link] lib/libhiddi.so=libhiddi.so.1
+

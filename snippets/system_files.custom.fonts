@@ -1,0 +1,11 @@
+######################################################
+### Fonts
+######################################################
+[dperms=0755 -followlink] etc/fonts/conf.d=etc/fontconfig/conf.d
+
+lib/__LIBFREETYPE__=usr/lib/__LIBFREETYPE__
+lib/libfontconfig.so.1=usr/lib/libfontconfig.so.1
+[type=link] lib/libfreetype.so=__LIBFREETYPE__
+[type=link] lib/libfontconfig.so=libfontconfig.so.1
+
+bin/fc-cache=bin/fc-cache

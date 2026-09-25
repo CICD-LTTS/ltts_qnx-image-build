@@ -1,0 +1,4 @@
+[qnx-input]
+# QNX specific config to control mouse scroll direction.
+invert-scroll=true
+

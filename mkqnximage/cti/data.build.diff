@@ -1,0 +1,39 @@
+--- data.build.orig	2026-03-24 09:42:39.184558336 -0400
++++ data.build	2026-03-24 15:08:03.283669448 -0400
+@@ -29,7 +29,6 @@
+ [uid=38 gid=38 type=dir dperms=755] var/dhcpcd
+ [uid=38 gid=38 type=dir dperms=755] var/run/dhcpcd
+ [type=link] var/db=dhcpcd
+-[type=link] var/etc/resolv.conf /data/var/dhcpcd/resolv.conf
+ 
+ [perms=444] var/etc/build.date = output/build/build.date
+ 
+@@ -39,19 +38,6 @@
+ 
+ [uid=0 gid=0 dperms=755 type=dir] home
+ 
+-[gid=0 uid=0 perms=644] var/etc/passwd = output/build/passwd
+-[gid=0 uid=0 perms=600 acl=u:0:r] var/etc/shadow = output/build/shadow
+-
+-[gid=0 uid=0 perms=644] var/etc/group = output/build/group
+-
+-[type=dir gid=0 uid=0 perms=755] var/etc/default
+-
+-[gid=0 uid=0 perms=644] var/etc/default/passwd = {
+-BASEDIR=/data/home
+-UIDRANGE=1000
+-GIDRANGE=1000
+-}
+-
+ #############################################
+ ### sshd
+ #############################################
+@@ -332,8 +314,6 @@
+ [type=dir] home/root/lib/dll
+ [type=dir uid=0 gid=0] home/root/tmp
+ home/root/.ssh/authorized_keys=/home/dphipps/dev/qnx/everywhere/quickstartbsp_raspberrypi-bcm2711-rpi4//build/rpi5/root_authorized_keys
+-[gid=0 uid=0 perms=400] var/ssh/ssh_host_rsa_key=local/misc_files/ssh_host_rsa_key
+-[gid=0 uid=0 perms=400] var/ssh/ssh_host_ed25519_key=local/misc_files/ssh_host_ed25519_key
+ [uid=1000 gid=1000]
+ [type=dir acl=u:0:x,u:30:x] home/qnxuser
+ [type=dir acl=u:30:rwx] home/qnxuser/cores

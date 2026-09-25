@@ -1,0 +1,208 @@
+--- system.build.orig	2026-03-24 09:42:39.176558237 -0400
++++ system.build	2026-03-24 15:07:59.556631341 -0400
+@@ -169,14 +169,12 @@
+ [type=hlink] bin/chgrp=toybox
+ [type=hlink] bin/chown=toybox
+ [type=hlink] bin/cksum=toybox
+-[type=hlink] bin/clear=toybox
+ [type=hlink] bin/cmp=toybox
+ [type=hlink] bin/comm=toybox
+ [type=hlink] bin/cp=toybox
+ [type=hlink] bin/cpio=toybox
+ [type=hlink] bin/crc32=toybox
+ [type=hlink] bin/cut=toybox
+-[type=hlink] bin/date=toybox
+ [type=hlink] bin/diff=toybox
+ [type=hlink] bin/dirname=toybox
+ [type=hlink] bin/dos2unix=toybox
+@@ -226,7 +224,6 @@
+ [type=hlink] bin/stat=toybox
+ [type=hlink] bin/strings=toybox
+ [type=hlink] bin/tail=toybox
+-[type=hlink] bin/tar=toybox
+ [type=hlink] bin/tee=toybox
+ [type=hlink] bin/test=toybox
+ [type=hlink] bin/time=toybox
+@@ -247,7 +244,6 @@
+ [type=hlink] bin/which=toybox
+ [type=hlink] bin/whoami=toybox
+ [type=hlink] bin/xargs=toybox
+-[type=hlink] bin/xxd=toybox
+ [type=hlink] bin/yes=toybox
+ [type=hlink] bin/zcat=toybox
+ 
+@@ -288,6 +284,7 @@
+ lib/libusbdci.so.2=lib/libusbdci.so.2
+ 
+ bin/dhcpcd=sbin/dhcpcd
++[type=link] etc/resolv.conf=/data/var/dhcpcd/resolv.conf
+ [type=dir dperms=555] etc/dhcpcd
+ [perms=444] etc/dhcpcd/dhcpcd.conf=etc/dhcpcd.conf
+ [perms=555] etc/dhcpcd/dhcpcd-run-hooks=output/build/dhcpcd-run-hooks
+@@ -314,66 +311,54 @@
+ bin/sshd=usr/sbin/sshd
+ bin/ssh-keygen=usr/bin/ssh-keygen
+ bin/sshd-session=usr/libexec/sshd-session
+-[dperms=555 type=dir] etc/ssh
+-[perms=444] etc/ssh/sshd_config={
+-Protocol 2
+-HostKey /data/var/ssh/ssh_host_rsa_key
+-HostKey /data/var/ssh/ssh_host_ed25519_key
+-Ciphers aes128-ctr,aes192-ctr,aes256-ctr
+-MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com
+-KexAlgorithms curve25519-sha256@libssh.org,ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256
+-AuthorizedKeysFile	.ssh/authorized_keys
+-UsePAM yes
+-# Disallow sshd's password checking though passwords might still be allowed
+-# via pam.
+-PasswordAuthentication no
+-PermitUserEnvironment yes
+-PidFile none
+-Subsystem sftp /system/bin/sftp-server
+-SshdSessionPath /system/bin/sshd-session
+-}
+ bin/scp=usr/bin/scp
+ bin/sftp-server=usr/libexec/sftp-server
+ bin/ssh=usr/bin/ssh
+ 
+ #############################################
+-## PAM
++### Users
+ #############################################
+-[uid=0 gid=0 dperms=755 type=dir] /lib/dll/pam
+-[uid=0 gid=0 dperms=755 type=dir] /etc/pam
+ 
+-lib/libpam.so.2=usr/lib/libpam.so.2
++[gid=0 uid=0 perms=644] etc/passwd = output/build/passwd
++[gid=0 uid=0 perms=600 acl=u:0:r] etc/shadow = output/build/shadow
++
++[gid=0 uid=0 perms=644] etc/group = output/build/group
++
++[type=dir gid=0 uid=0 perms=755] etc/default
++
++[gid=0 uid=0 perms=644] etc/default/passwd = {
++BASEDIR=/data/home
++UIDRANGE=1000
++GIDRANGE=1000
++}
+ 
+-lib/dll/pam/pam_deny.so=usr/lib/pam_deny.so
+-lib/dll/pam/pam_echo.so=usr/lib/pam_echo.so
+-lib/dll/pam/pam_exec.so=usr/lib/pam_exec.so
+-lib/dll/pam/pam_group.so=usr/lib/pam_group.so
+-lib/dll/pam/pam_permit.so=usr/lib/pam_permit.so
+-lib/dll/pam/pam_qnx.so=usr/lib/pam_qnx.so
+-lib/dll/pam/pam_rootok.so=usr/lib/pam_rootok.so
+-lib/dll/pam/pam_self.so=usr/lib/pam_self.so
++#############################################
++## PAM
++#############################################
++#
++[uid=0 gid=0 dperms=755 type=dir] etc/pam.d
+ 
+-[perms=444] etc/pam/login = {
++[perms=444] etc/pam.d/login = {
+ auth requisite pam_qnx.so
+ account requisite pam_qnx.so
+ session requisite pam_qnx.so
+ 
+ password requisite pam_qnx.so
+ }
+-[perms=444] etc/pam/sshd = {
++[perms=444] etc/pam.d/sshd = {
+ auth requisite pam_qnx.so
+ account requisite pam_qnx.so
+ session requisite pam_qnx.so
+ 
+ password requisite pam_qnx.so
+ }
+-[perms=444] etc/pam/passwd = {
++[perms=444] etc/pam.d/passwd = {
+ auth requisite pam_qnx.so
+ account requisite pam_qnx.so
+ session requisite pam_qnx.so
+ password requisite pam_qnx.so
+ }
+-[perms=444] etc/pam/su = {
++[perms=444] etc/pam.d/su = {
+ auth sufficient pam_rootok.so no_warn
+ auth requisite pam_qnx.so
+ account requisite pam_qnx.so
+@@ -382,6 +367,19 @@
+ password requisite pam_qnx.so
+ }
+ 
++# TODO: add what is missing from apk package until it is fixed
++#
++[type=link] lib/libpam.so=libpam.so.2
++[type=link] lib/pam_deny.so=pam_deny.so.2
++[type=link] lib/pam_echo.so=pam_echo.so.2
++[type=link] lib/pam_exec.so=pam_exec.so.2
++[type=link] lib/pam_group.so=pam_group.so.2
++[type=link] lib/pam_permit.so=pam_permit.so.2
++[type=link] lib/pam_qnx.so=pam_qnx.so.2
++[type=link] lib/pam_rootok.so=pam_rootok.so.2
++[type=link] lib/pam_secpol.so=pam_secpol.so.2
++[type=link] lib/pam_self.so=pam_self.so.2
++
+ #############################################
+ ### Customization
+ #############################################
+@@ -633,37 +631,37 @@
+ [type=file uid=0 gid=0 perms=644] etc/fonts/conf.avail/58-dejavu-lgc-serif.conf=apk_root/etc/fonts/conf.avail/58-dejavu-lgc-serif.conf
+ [type=dir uid=0 gid=0 dperms=755] etc/fonts/conf.d
+ [type=link uid=0 gid=0] etc/fonts/conf.d/45-dejavu.conf=../conf.avail/45-dejavu.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/69-unifont.conf=../../../usr/share/fontconfig/conf.avail/69-unifont.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/30-metric-aliases.conf=../../../usr/share/fontconfig/conf.avail/30-metric-aliases.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/65-fonts-persian.conf=../../../usr/share/fontconfig/conf.avail/65-fonts-persian.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/49-sansserif.conf=../../../usr/share/fontconfig/conf.avail/49-sansserif.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/69-unifont.conf=/usr/share/fontconfig/conf.avail/69-unifont.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/30-metric-aliases.conf=/usr/share/fontconfig/conf.avail/30-metric-aliases.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/65-fonts-persian.conf=/usr/share/fontconfig/conf.avail/65-fonts-persian.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/49-sansserif.conf=/usr/share/fontconfig/conf.avail/49-sansserif.conf
+ [type=link uid=0 gid=0] etc/fonts/conf.d/45-liberation.conf=../conf.avail/45-liberation.conf
+ [type=link uid=0 gid=0] etc/fonts/conf.d/90-tt-dejavu.conf=../conf.avail/90-tt-dejavu.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/70-no-bitmaps-except-emoji.conf=../../../usr/share/fontconfig/conf.avail/70-no-bitmaps-except-emoji.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/70-no-bitmaps-except-emoji.conf=/usr/share/fontconfig/conf.avail/70-no-bitmaps-except-emoji.conf
+ [type=link uid=0 gid=0] etc/fonts/conf.d/30-liberation-sans.conf=../conf.avail/30-liberation-sans.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/48-spacing.conf=../../../usr/share/fontconfig/conf.avail/48-spacing.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/51-local.conf=../../../usr/share/fontconfig/conf.avail/51-local.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/45-generic.conf=../../../usr/share/fontconfig/conf.avail/45-generic.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/48-spacing.conf=/usr/share/fontconfig/conf.avail/48-spacing.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/51-local.conf=/usr/share/fontconfig/conf.avail/51-local.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/45-generic.conf=/usr/share/fontconfig/conf.avail/45-generic.conf
+ [type=link uid=0 gid=0] etc/fonts/conf.d/30-liberation-serif.conf=../conf.avail/30-liberation-serif.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/10-hinting-slight.conf=../../../usr/share/fontconfig/conf.avail/10-hinting-slight.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/50-user.conf=../../../usr/share/fontconfig/conf.avail/50-user.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/90-synthetic.conf=../../../usr/share/fontconfig/conf.avail/90-synthetic.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/80-delicious.conf=../../../usr/share/fontconfig/conf.avail/80-delicious.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/10-sub-pixel-none.conf=../../../usr/share/fontconfig/conf.avail/10-sub-pixel-none.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/60-latin.conf=../../../usr/share/fontconfig/conf.avail/60-latin.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/60-generic.conf=../../../usr/share/fontconfig/conf.avail/60-generic.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/10-scale-bitmap-fonts.conf=../../../usr/share/fontconfig/conf.avail/10-scale-bitmap-fonts.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/45-latin.conf=../../../usr/share/fontconfig/conf.avail/45-latin.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/11-lcdfilter-default.conf=../../../usr/share/fontconfig/conf.avail/11-lcdfilter-default.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/10-hinting-slight.conf=/usr/share/fontconfig/conf.avail/10-hinting-slight.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/50-user.conf=/usr/share/fontconfig/conf.avail/50-user.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/90-synthetic.conf=/usr/share/fontconfig/conf.avail/90-synthetic.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/80-delicious.conf=/usr/share/fontconfig/conf.avail/80-delicious.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/10-sub-pixel-none.conf=/usr/share/fontconfig/conf.avail/10-sub-pixel-none.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/60-latin.conf=/usr/share/fontconfig/conf.avail/60-latin.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/60-generic.conf=/usr/share/fontconfig/conf.avail/60-generic.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/10-scale-bitmap-fonts.conf=/usr/share/fontconfig/conf.avail/10-scale-bitmap-fonts.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/45-latin.conf=/usr/share/fontconfig/conf.avail/45-latin.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/11-lcdfilter-default.conf=/usr/share/fontconfig/conf.avail/11-lcdfilter-default.conf
+ [type=link uid=0 gid=0] etc/fonts/conf.d/90-liberation.conf=../conf.avail/90-liberation.conf
+ [type=file uid=0 gid=0 perms=644] etc/fonts/conf.d/README=apk_root/etc/fonts/conf.d/README
+-[type=link uid=0 gid=0] etc/fonts/conf.d/40-nonlatin.conf=../../../usr/share/fontconfig/conf.avail/40-nonlatin.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/65-nonlatin.conf=../../../usr/share/fontconfig/conf.avail/65-nonlatin.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/10-yes-antialias.conf=../../../usr/share/fontconfig/conf.avail/10-yes-antialias.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/40-nonlatin.conf=/usr/share/fontconfig/conf.avail/40-nonlatin.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/65-nonlatin.conf=/usr/share/fontconfig/conf.avail/65-nonlatin.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/10-yes-antialias.conf=/usr/share/fontconfig/conf.avail/10-yes-antialias.conf
+ [type=link uid=0 gid=0] etc/fonts/conf.d/30-liberation-mono.conf=../conf.avail/30-liberation-mono.conf
+-[type=link uid=0 gid=0] etc/fonts/conf.d/20-unhint-small-vera.conf=../../../usr/share/fontconfig/conf.avail/20-unhint-small-vera.conf
++[type=link uid=0 gid=0] etc/fonts/conf.d/20-unhint-small-vera.conf=/usr/share/fontconfig/conf.avail/20-unhint-small-vera.conf
+ [type=dir uid=0 gid=0 dperms=755] etc/skel
+ [type=file uid=0 gid=0 perms=644] etc/skel/.bash_logout=apk_root/etc/skel/.bash_logout
+ [type=file uid=0 gid=0 perms=644] etc/skel/.bashrc=apk_root/etc/skel/.bashrc
