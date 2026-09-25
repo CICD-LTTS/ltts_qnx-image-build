@@ -1,8 +1,0 @@
-[perms=555] libexec/qnx/setup-pam.sh = {
-#!/bin/bash
-
-echo "---> Configuring PAM"
-setconf pamlib /usr/lib
-setconf pamconf /etc/pam.d/
-}
-

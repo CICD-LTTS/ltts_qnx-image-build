@@ -1,2 +1,0 @@
-# increase number of open files per process
-PROC_OPTIONS='-F 2000'

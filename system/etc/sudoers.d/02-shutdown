@@ -1,4 +1,0 @@
-## allow qnxuser to shutdown or reboot the target device
-qnxuser ALL=(ALL) NOPASSWD: /usr/bin/shutdown -S reboot
-qnxuser ALL=(ALL) NOPASSWD: /usr/bin/shutdown -S system
-

@@ -1,6 +1,0 @@
-[qnx-input]
-# QNX specific config to control the mouse scroll speed.
-# Default is 10
-
-#scroll-speed=10
-

@@ -1,5 +1,0 @@
-mount -t dos /dev/hd0t12 /boot
-if [ -e /boot/onboot ]; then
-    echo Running onboot script
-    ksh /boot/onboot
-fi
