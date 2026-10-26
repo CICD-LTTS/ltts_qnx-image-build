@@ -35,3 +35,33 @@ PCI_HW_CONFIG_FILE=/proc/boot/pci_hw-bcm2712-rpi5.cfg
 PCI_DEBUG_MODULE=pci_debug2.so
 
 }
+
+# ==============================================================================
+# Custom IFS Files Manifest
+# ==============================================================================
+
+#------------MCP215 driver ---------------------
+[perms=0755] /usr/local/bin/mcp2515 = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/drivers/mcp2515/mcp2515
+
+#----------------CAN Application Rx and Tx -----------------
+[perms=0755] /usr/local/bin/appl_can_rx = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/applications/can/can_rx/appl_can_rx
+[perms=0755] /usr/local/bin/appl_can_tx = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/applications/can/can_tx/appl_can_tx
+
+# --- Middleware & Utilities ---
+[perms=0755] /usr/local/bin/dlt-daemon = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/utilities/dlt-daemon/build/src/daemon/dlt-daemon
+
+# --- Libraries ---
+[perms=0755] /usr/lib/libdlt.so.3.0.1 = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/utilities/dlt-daemon/build/src/lib/libdlt.so.3.0.1
+[perms=0755] /usr/lib/libdlt.so.3     = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/utilities/dlt-daemon/build/src/lib/libdlt.so.3.0.1
+
+# --- System Life-Cycle Managers ---
+[perms=0755] /usr/local/bin/execution_manager = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/applications/em/execution_manager
+[perms=0755] /usr/local/bin/state_manager = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/applications/machine_sm/state_manager
+
+# --- Diagnostic Services ---
+[perms=0755] /usr/local/bin/diagd = /home/prathik/ltts-crosscode-lab/sbc-framework//qnx_pi5/applications/daigd/diagd
+[perms=0755] /usr/local/bin/diag_manager = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/applications/diag_manager/diag_manager
+
+# --- Communication Stacks (SOME/IP) ---
+[perms=0755] /usr/local/bin/someip_server = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/applications/someip/server
+[perms=0755] /usr/local/bin/someip_client = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/applications/someip/client

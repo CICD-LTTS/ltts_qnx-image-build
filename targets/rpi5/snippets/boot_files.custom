@@ -3,3 +3,5 @@ HOSTNAME=qnxpi
 }
 wpa_supplicant.conf=wpa_supplicant.conf
 wpa_supplicant.conf.verbose=wpa_supplicant.conf.verbose
+
+}

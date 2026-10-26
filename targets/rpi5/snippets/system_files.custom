@@ -141,3 +141,14 @@ etc/usb_start.sh = {
 [type=link uid=0 gid=0 perms=0755] lib/libunwind-aarch64.so=libunwind-aarch64.so.8
 [type=link uid=0 gid=0 perms=0755] lib/libunwind-generic.so=libunwind-aarch64.so
 
+# --- Configuration Files ---
+# --- Configuration Files ---
+/etc/dlt.conf = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/utilities/dlt-daemon/src/daemon/dlt.conf
+/etc/dlt-runtime.cfg = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/utilities/dlt-daemon/src/daemon/dlt-runtime.cfg
+/etc/dlt-runtime-application.cfg = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/utilities/dlt-daemon/src/daemon/dlt-runtime-application.cfg
+/etc/manifest.json = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/applications/em/manifest.json
+
+# --- Post-Boot Startup Scripts ---
+[perms=0755] /etc/post_start.~50.can_stack = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/qnx-image-build/repo/targets/rpi5/snippets/post_start.~50.can_stack
+[perms=0755] /etc/post_start.~60.middleware = /home/prathik/ltts-crosscode-lab/sbc-framework/qnx_pi5/qnx-image-build/repo/targets/rpi5/snippets/post_start.~60.middleware
+
