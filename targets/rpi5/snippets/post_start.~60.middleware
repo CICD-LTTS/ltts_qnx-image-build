@@ -1,0 +1,53 @@
+#!/bin/sh
+# ==============================================================================
+# Script Name: post_start.~60.middleware
+# ==============================================================================
+
+echo "[INFO] Initializing middleware service sequence..."
+
+mkdir -p /var/log
+
+if [ -f /etc/dlt-runtime.cfg ]; then
+    cp /etc/dlt-runtime.cfg /var/log/dlt-runtime.cfg
+    echo "[INFO] Staged dlt-runtime.cfg to /var/log/"
+fi
+
+if [ -f /etc/dlt-runtime-application.cfg ]; then
+    cp /etc/dlt-runtime-application.cfg /var/log/dlt-runtime-application.cfg
+fi
+
+if [ -f /etc/manifest.json ]; then
+    cp /etc/manifest.json /var/log/manifest.json
+fi
+
+# 2. Initialize Core Life-Cycle Managers
+if [ -x /usr/local/bin/state_manager ]; then
+    echo "[INFO] Starting State Manager..."
+    /usr/local/bin/state_manager &
+    sleep 1
+fi
+
+if [ -x /usr/local/bin/execution_manager ]; then
+    echo "[INFO] Starting Execution Manager..."
+    /usr/local/bin/execution_manager &
+    sleep 1
+fi
+
+# 3. Initialize Diagnostics Layer
+if [ -x /usr/local/bin/diagd ]; then
+    echo "[INFO] Starting Diagnostic Daemon (diagd)..."
+    /usr/local/bin/diagd &
+fi
+
+if [ -x /usr/local/bin/diag_manager ]; then
+    echo "[INFO] Starting Diagnostic Manager..."
+    /usr/local/bin/diag_manager &
+fi
+
+# 4. Initialize Communication (SOME/IP) Services
+if [ -x /usr/local/bin/someip_server ]; then
+    echo "[INFO] Starting SOME/IP Server..."
+    /usr/local/bin/someip_server &
+fi
+
+echo "[INFO] Middleware service sequence completed successfully."

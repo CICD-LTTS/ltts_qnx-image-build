@@ -1,0 +1,21 @@
+#!/bin/sh
+# ==============================================================================
+# Script Name: post_start.~50.can_stack
+# ==============================================================================
+
+echo "[INFO] Starting MCP2515 SPI-CAN driver..."
+/usr/local/bin/mcp2515 -u 0 -v &
+
+# Block script execution until all required device nodes appear (timeout: 5 seconds)
+waitfor /dev/io-spi/spi0/dev0 5
+waitfor /dev/can0/rx0 5
+waitfor /dev/can0/tx0 5
+
+# Launch real-time applications only once BOTH hardware nodes are verified ready
+if [ -e /dev/can0/rx0 ] && [ -e /dev/can0/tx0 ]; then
+    echo "[INFO] CAN nodes ready. Starting CAN Rx/Tx applications..."
+    /usr/local/bin/appl_can_rx &
+    /usr/local/bin/appl_can_tx &
+else
+    echo "[ERROR] CAN bus nodes (/dev/can0/rx0 or /dev/can0/tx0) failed to initialize."
+fi
